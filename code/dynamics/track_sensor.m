@@ -1,8 +1,13 @@
-function [x, y] = track()
+function [x,y,p] = track_sensor(a,b)
+% input:
 % a: current x position of the car
 % b: current y positino of the car
+% output: 
+% x: list of x positions 
+% y: list of y positions
+% p: list of polyfit coefficients 
 % section 1
-x1 = linspace(2000,0, 100);
+x1 = linspace(2000, 0, 100);
 y1 = zeros(1, 100);
 
 % section 2
@@ -43,9 +48,12 @@ y_tot = ones(1, 400);
 x_tot(1:100) = x1; x_tot(101:200) = x2; x_tot(201:300) = x3; x_tot(301:400) = x4;
 y_tot(1:100) = y1; y_tot(101:200) = y2; y_tot(201:300) = y3; y_tot(301:400) = y4;
 
-% transformation matrix
 M = [cos(pi/3) -sin(pi/3); sin(pi/3) cos(pi/3)];
 transformed_track = M*[x_tot; y_tot];
 
-x = transformed_track(1,:); y = transformed_track(2,:);
+x_trans = transformed_track(1,:); y_trans = transformed_track(2,:);
+% output
+x = x_trans(a:a+20); 
+y = y_trans(b:b+20);
+p = polyfit(x,y,2);
 end

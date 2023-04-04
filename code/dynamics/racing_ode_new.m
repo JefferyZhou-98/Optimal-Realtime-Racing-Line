@@ -1,4 +1,4 @@
-function test_dd = racing_ode_test(x, u, k_slip)
+function test_dd = racing_ode_new(x, u, k_slip)
 % importing the physical parameters
 global L H m_t m_b m_w r W k g dt
 % defining the states and inputs
@@ -31,7 +31,8 @@ acc = F/m_t;
 theta_dot = r*(omega_R - omega_L)/L;
 
 % absolute speed ----------------------------------------------------------
-speed = (r*omega_R + r*omega_L)/2;
+V_r = omega_R*r; V_l = omega_L*r;
+speed = (V_r + V_l)/2;
 
 test_dd = [speed; acc; theta_dot; alpha_L; alpha_R];
 end
