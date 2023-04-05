@@ -1,11 +1,4 @@
-function [x,y,p] = track_sensor_new(a, b)
-% input:
-% a: current x position of the car
-% b: current y positino of the car
-% output: 
-% x: list of x positions 
-% y: list of y positions
-% p: list of polyfit coefficients 
+function [x,y] = racetrack_generation_2()
 x1 = flip(0:20);
 y1 = -(20^2 - (x1-20).^2).^0.5;
 
@@ -57,10 +50,5 @@ beta = pi/3;
 M = [cos(beta) -sin(beta); sin(beta) cos(beta)];
 transformed_track = M*[x_save; y_save];
 
-x_trans = transformed_track(1,:); y_trans = transformed_track(2,:);
-
-x = x_trans(a:a+10); 
-y = y_trans(b:b+10);
-p = polyfit(x,y,2);
-
-end
+x = transformed_track(1,:); y = transformed_track(2,:);
+end    

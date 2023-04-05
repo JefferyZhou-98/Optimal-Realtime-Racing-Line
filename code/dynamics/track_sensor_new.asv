@@ -63,4 +63,6 @@ x = x_trans(a:a+10);
 y = y_trans(b:b+10);
 p = polyfit(x,y,2);
 
+y_start = polyval(p, x(1));
+y_end = polyval(p, x(end));
 end

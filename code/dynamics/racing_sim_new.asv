@@ -63,8 +63,8 @@ theta_save = ones(1,10); theta_save(1) = theta_0;
 % end
 
 % waypoint assignment -----------------------------------------------------
-x_waypoints = ones(1, 40);
-y_waypoints = ones(1, 40);
+x_waypoints = ones(1, 16);
+y_waypoints = ones(1, );
 % importing track
 [x_track, y_track] = racetrack_generation_2();
 figure(1)
@@ -78,12 +78,11 @@ for i = 1:length(x_track) - 10
         y_waypoints(i) = y_track(i);
         [x_poly, y_poly, p] = track_sensor_new(i, i);
         y_plot = p(1)*x_poly.^2 + p(2)*x_poly + p(3);
-        scatter(x_waypoints(i), y_waypoints(i), 'filled', LineWidth=40, MarkerFaceColor="#D95319");
+        scatter(x_waypoints(i), y_waypoints(i), 'filled', LineWidth=4, MarkerFaceColor="#D95319");
         hold on
-        plot(x_poly, y_plot, LineStyle=":", LineWidth=3.5);
+        plot(x_poly, y_plot, LineStyle=":", LineWidth=2.5);
         drawnow
         legend("Race Track","Waypoints","Polyfit Trajectory", fontsize=15)
     end
 end
 
-%% rotate the track as the car goes, making sure each section does not have infinite slope 
