@@ -63,8 +63,8 @@ theta_save = ones(1,10); theta_save(1) = theta_0;
 % end
 
 % waypoint assignment -----------------------------------------------------
-x_waypoints = ones(1, 20);
-y_waypoints = ones(1, 20);
+x_waypoints = ones(1, 40);
+y_waypoints = ones(1, 40);
 % importing track
 [x_track, y_track] = racetrack_generation_2();
 figure(1)
@@ -72,8 +72,8 @@ plot(x_track,y_track, linewidth=4, Color='k')
 axis equal
 axis padded
 hold on
-for i = 1:length(x_track) - 20
-    if rem(i, 20) == 0 || i == 1
+for i = 1:length(x_track) - 10
+    if rem(i, 10) == 0 || i == 1
         x_waypoints(i) = x_track(i);
         y_waypoints(i) = y_track(i);
         [x_poly, y_poly, p] = track_sensor_new(i, i);
