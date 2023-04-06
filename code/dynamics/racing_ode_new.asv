@@ -5,9 +5,6 @@ global L H m_t m_b m_w r W k g dt
 x_pos = x(1);
 y_pos = x(2);
 theta = x(3);
-omega_R = x(4);
-omega_L = x(5);
-
 
 % torque applied to the wheels
 T_L = u(1);
@@ -25,10 +22,11 @@ alpha_L = T_L/Iyy_b; alpha_R = T_R/Iyy_b;
 omega_L = alpha_L*dt; omega_R = alpha_R*dt;
 
 % Total force
-F = (T_L/r) + (T_R/r) - k_f*m_t*g;
-
+% F = (T_L/r) + (T_R/r) - k_f*m_t*g;
+F_l = (T_L/r) - 0.5*k_f*m_t*g;
+F_r = (T_R/r) - 0.5*k_f*m_t*g;
 % linear acceleration -----------------------------------------------------
-acc = F/m_t;
+acc_ = F/m_t;
 
 % thetadot ----------------------------------------------------------------
 theta_dot = r*(omega_R - omega_L)/L;
