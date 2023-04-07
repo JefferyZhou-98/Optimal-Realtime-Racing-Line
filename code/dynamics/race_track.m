@@ -1,4 +1,4 @@
-function [x,y] = race_track()
+function [x,y] = race_track(beta)
 % input:
 % a: current x position of the car
 % b: current y positino of the car
@@ -53,7 +53,7 @@ x_save = [x1,x2,x3,x4,x5,x6,x7,x8,x9,x10,x11,x12,x13,x14];
 y_save = [y1,y2,y3,y4,y5,y6,y7,y8,y9,y10,y11,y12,y13,y14];
 
 % applying coordinate transformation to shift the plot
-beta = 0;
+
 M = [cos(beta) -sin(beta); sin(beta) cos(beta)];
 transformed_track = M*[x_save; y_save];
 
