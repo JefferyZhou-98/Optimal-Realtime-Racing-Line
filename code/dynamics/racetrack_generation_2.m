@@ -1,5 +1,4 @@
-function [x,y] = racetrack_generation_2()
-x1 = flip(0:20);
+x1 = flip(linspace(0,20,27));
 y1 = -(20^2 - (x1-20).^2).^0.5;
 
 x2 = (0:20);
@@ -41,14 +40,51 @@ y13 = (10^2 - (x13-60).^2).^0.5 - 30;
 x14 = flip(20:60);
 y14 = zeros(1,41) - 20;
 
+x = [x1,x2,x3,x4,x5,x6,x7,x8,x9,x10,x11,x12,x13,x14];
+y = [y1,y2,y3,y4,y5,y6,y7,y8,y9,y10,y11,y12,y13,y14];
 
-x_save = [x1,x2,x3,x4,x5,x6,x7,x8,x9,x10,x11,x12,x13,x14];
-y_save = [y1,y2,y3,y4,y5,y6,y7,y8,y9,y10,y11,y12,y13,y14];
+coords = [x;y]';
 
-% applying coordinate transformation to shift the plot
-beta = 0;
-M = [cos(beta) -sin(beta); sin(beta) cos(beta)];
-transformed_track = M*[x_save; y_save];
+plot(x,y,'LineWidth',2)
 
-x = transformed_track(1,:); y = transformed_track(2,:);
-end    
+hold on
+saved_trajectory = zeros(20,3);
+coords_temp = zeros(400,2);
+count=1;
+for i=1:20:400
+    if i > 380
+        x_temp = x(i:length(x));
+        y_temp = y(i:length(y));        
+    else
+        x_temp = x(i:i+20);
+        y_temp = y(i:i+20);
+    end
+    coordinates = [x_temp;y_temp]';
+    trajectory_temp = trajectory_generation(coordinates);
+
+    %y_plot = polyval(x_temp,trajectory_temp);
+    y_plot = trajectory_temp(1)*x_temp.^2 + trajectory_temp(2)*x_temp + trajectory_temp(3);
+    plot(x_temp,y_temp,'LineWidth',3)
+    saved_trajectory(count,1) = trajectory_temp(1);
+    saved_trajectory(count,2) = trajectory_temp(2);
+    saved_trajectory(count,3) = trajectory_temp(3);
+    
+    hold on
+    pause(0.05)
+    count = count+1;
+end
+
+upper_fric = 0.6;
+lower_fric = 0.1;
+
+friction_outside = (upper_fric - lower_fric).*rand(20,1) + lower_fric;
+friction_inside = (upper_fric - lower_fric).*rand(20,1) + lower_fric;
+
+    
+function trajectory = trajectory_generation(coordinates)
+
+    trajectory = polyfit(coordinates(:,1),coordinates(:,2),2);
+
+end
+    
+    
