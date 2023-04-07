@@ -1,12 +1,16 @@
-function x_dd = racing_ode(x, u, k_slip)
+function test_dd = racing_ode(x, u, k_slip)
 % importing the physical parameters
 global L H m_t m_b m_w r W k g dt
 % defining the states and inputs
 x_pos = x(1);
 y_pos = x(2);
 theta = x(3);
-phi_l = x(4);
-phi_r = x(5);
+omega_R = x(4);
+omega_L = x(5);
+x_dot = x(6);
+y_dot = x(7);
+
+
 % torque applied to the wheels
 T_L = u(1);
 T_R = u(2);
@@ -15,38 +19,16 @@ T_R = u(2);
 % where K_f = k on dry track
 k_f = k*k_slip;
 
-% state vectors
-q = [x_pos; y_pos; theta; phi_l; phi_r];
-% distance between inertial frame and body frame 
-d = sqrt(x_pos^2 + y_pos^2);
+% moment of inertia of wheels
+Iyy_b = m_w*(r^2)/2;
+% moment of inertia of the body
+Izz_b = (1/12)*m_t*(H^2 + W^2);
 
-% inertia tensor of the cart (rectangle) only Izz 
-I_body = (1/12)*m_b*(W^2 + L^2);
+% ode:
+F_tot = (T_L/(r)) + (T_R/(r)) - k_f*m_t*g;
+x_dd = (F_tot/m_t)*cos(theta);
+y_dd = (F_tot/m_t)*sin(theta);
+theta_dd = ((L/2)/Izz_b)*((T_R/(r)) - (T_L/(r)));
 
-% inertia tensor of the wheels in body frame
-Ixx_b = m_w*(r^2)/4; Iyy_b = m_w*(r^2)/2; Izz_b = m_w*(r^2)/4;
-
-% state vector derivative
-omega_L = (T_L/Iyy_b)*dt;
-omega_R = (T_R/Iyy_b)*dt;
-q_dot = (r/2)*[(omega_L - omega_R)*cos(theta);
-               (omega_L - omega_R)*sin(theta);
-               -(omega_L + omega_R)/W];
-x_d = q_dot(1); y_d = q_dot(2); theta_d = q_dot(3); 
-
-% total inertia
-I_T = I_body + m_b*d^2 + 2*m_w*W^2 + 2*Izz_b;
-
-% Lagrangian form: M(q) * q_dd + B(q, q_d) = F
-M_q = [m_t, 0, -m_b*d*sin(theta), 0, 0;
-       0, m_t, m_b*d*cos(theta), 0, 0;
-       -m_b*d*sin(theta), m_b*d*cos(theta), I_T, 0, 0;
-       0, 0, 0, Iyy_b, 0;
-       0, 0, 0, 0, Iyy_b];
-
-B_q = -m_b*(theta_d^2)*[cos(theta); sin(theta); 0; 0; 0];
-
-F = [0; 0; 0; (T_R/r) - k_f*m_t*g/2; (T_L/r) - k_f*m_t*g/2];
-
-x_dd = M_q\(F - B_q);
+test_dd = [x_dd; y_dd; theta_dd];
 end

@@ -1,4 +1,4 @@
-function [x,y,p] = track_sensor(a,b)
+function [x,y,p] = track_sensor_new(a, b)
 % input:
 % a: current x position of the car
 % b: current y positino of the car
@@ -6,54 +6,61 @@ function [x,y,p] = track_sensor(a,b)
 % x: list of x positions 
 % y: list of y positions
 % p: list of polyfit coefficients 
-% section 1
-x1 = linspace(2000, 0, 100);
-y1 = zeros(1, 100);
+x1 = flip(0:20);
+y1 = -(20^2 - (x1-20).^2).^0.5;
 
-% section 2
-x2 = ones(1, 100); y2 = ones(1, 100);
-r1 = 400;
-theta_2 = linspace(0, 180, 100);
-for i = 1:length(theta_2)
-    if theta_2(i) >= 0 && theta_2(i) <= 90
-        x2(i) = x1(end) - r1*sind(theta_2(i));
-        y2(i) = r1 - r1*cosd(theta_2(i));
-    else
-        x2(i) = -sind(theta_2(i))*r1;
-        y2(i) = r1 - r1*cosd(theta_2(i));
-    end
-end
+x2 = (0:20);
+y2 = (20^2 - (x2-20).^2).^0.5;
 
-% section 3
-x3 = linspace(x2(end), 2000, 100);
-y3 = y2(end)*ones(1, 100);
+x3 = (20:50);
+y3 = zeros(1,31) + 20;
 
-% section 4
-x4 = ones(1, 100); y4 = ones(1, 100);
-r2 = 400;
-theta_4 = linspace(0, 180, 100);
-for i = 1:length(theta_4)
-    if theta_4(i) >= 0 && theta_4(i) <= 90
-        x4(i) = x3(end) + r2*sind(theta_4(i));
-        y4(i) = r2 - r2*cosd(theta_4(i));
-    else
-        x4(i) = x3(end) + sind(theta_4(i))*r1;
-        y4(i) = r1 - r1*cosd(theta_4(i));
-    end
-end
+x4 = (50:60);
+y4 = -(10^2 - (x4-50).^2).^0.5 + 30;
 
-% storing all values of x and y
-x_tot = ones(1, 400);
-y_tot = ones(1, 400);
-x_tot(1:100) = x1; x_tot(101:200) = x2; x_tot(201:300) = x3; x_tot(301:400) = x4;
-y_tot(1:100) = y1; y_tot(101:200) = y2; y_tot(201:300) = y3; y_tot(301:400) = y4;
+x5 = (60:70);
+y5 = (10^2 - (x5-70).^2).^0.5 + 30;
 
-M = [cos(pi/6) -sin(pi/6); sin(pi/6) cos(pi/6)];
-transformed_track = M*[x_tot; y_tot];
+x6 = (70:110);
+y6 = zeros(1,length(x6)) + 40;
+
+x7 = (110:130);
+y7 = (20^2 - (x7-110).^2).^0.5 + 20;
+
+x8 = zeros(1,81) + 130;
+y8 = flip(-60:20);
+
+x9 = flip(110:130);
+y9 = -(20^2 - (x9-110).^2).^0.5 - 60; 
+
+x10 = flip(80:110);
+y10 = zeros(1,31) - 80;
+
+x11 = flip(70:80);
+y11 = -(10^2 - (x11-80).^2).^0.5 - 70;
+
+x12 = zeros(1,41) + 70;
+y12 = (-70:-30);
+
+x13 = flip(60:70);
+y13 = (10^2 - (x13-60).^2).^0.5 - 30;
+
+x14 = flip(20:60);
+y14 = zeros(1,41) - 20;
+
+
+x_save = [x1,x2,x3,x4,x5,x6,x7,x8,x9,x10,x11,x12,x13,x14];
+y_save = [y1,y2,y3,y4,y5,y6,y7,y8,y9,y10,y11,y12,y13,y14];
+
+% applying coordinate transformation to shift the plot
+beta = pi/3;
+M = [cos(beta) -sin(beta); sin(beta) cos(beta)];
+transformed_track = M*[x_save; y_save];
 
 x_trans = transformed_track(1,:); y_trans = transformed_track(2,:);
-% output
-x = x_trans(a:a+20); 
-y = y_trans(b:b+20);
+
+x = x_trans(a:a+10); 
+y = y_trans(b:b+10);
 p = polyfit(x,y,2);
+
 end
