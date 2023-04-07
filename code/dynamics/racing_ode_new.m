@@ -18,7 +18,7 @@ T_R = u(2);
 k_f = k*k_slip;
 
 % moment of inertia
-Iyy_b = m_w*(r^2)/2;
+Iyy_b = (m_t)*(r^2)/2;
 
 % angular acceleration ----------------------------------------------------
 alpha_L = T_L/Iyy_b; alpha_R = T_R/Iyy_b;

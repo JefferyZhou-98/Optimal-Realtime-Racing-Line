@@ -12,13 +12,13 @@ global L H m_t m_b m_w r W k g dt
 % k: friction coefficient (dry condition) 
 % g: gravitational constant (kg/m2)
 
-W = 0.7;
-L = 1.5;
-H = 0.5;
-m_t = 50; 
-m_b = 40;
-m_w = 5;
-r = 0.25;
+W = 2;
+L = 5.5;
+H = 1;
+m_t = 400; 
+m_b = 360;
+m_w = 30;
+r = 0.35;
 k = 0.7;
 g = 9.81; 
 
@@ -27,14 +27,15 @@ g = 9.81;
 x_0 = 60; 
 y_0 = -20;
 theta_0 = pi; theta_k = theta_0;
+
 vx_0 = 0; Vx_k = vx_0;
 vy_0 = 0; Vy_k = vy_0;
 theta_d_0 = 0; theta_d_k = theta_d_0;
 omegaR_0 = 0; omegaR_k = omegaR_0;
 omegaL_0 = 0; omegaL_k = omegaL_0;
 % inputs
-T_L_0 = 81; % Nm
-T_R_0 = 80; % Nm
+T_L_0 = 800; % Nm
+T_R_0 = 400; % Nm
 % slipping condition
 k_slip = 1;
 
@@ -45,34 +46,31 @@ y_save = ones(1,10); y_save(1) = y_0;
 theta_save = ones(1,10); theta_save(1) = theta_0;
 omegaL_save = ones(1,10); omegaL_save(1) = omegaL_0;
 omegaR_save = ones(1,10); omegaR_save(1) = omegaR_0;
-vx_save = ones(1,10); vx_save(1) = vx_0;
-vy_save = ones(1,10); vy_save(1) = vy_0;
 
 t = linspace(0, 5, 10);
 dt = t(2) - t(1);
 for i = 1:length(t) - 1
-    x_init = [x_save(i); y_save(i); theta_save(i); 
-              omegaR_save(i); omegaL_save(i); vx_save(i); vy_save(i)];
+    x_init = [x_save(i); y_save(i); theta_save(i); omegaR_save(i); omegaL_save(i)];
     u_init = [T_L_0; T_R_0];
-    s_dd = racing_ode(x_init, u_init, k_slip);
+    s_dd = racing_ode_new(x_init, u_init, k_slip);
     % grabbing the second order terms
-    x_dd = s_dd(1); y_dd = s_dd(2); theta_dd = s_dd(3);
+    speed_k = s_dd(1); acc = s_dd(2); theta_dot_k = s_dd(3); alpha_L = s_dd(4); alpha_R = s_dd(5);
     % propagation
-    x_save(i+1) = x_save(i) + Vx_k*dt + 0.5*x_dd*(dt^2);
-    y_save(i+1) = y_save(i) + Vy_k*dt + 0.5*y_dd*(dt^2);
-    theta_save(i+1) = theta_save(i) + theta_d_k*dt + 0.5*theta_dd*(dt^2);
-
+    x_save(i+1) = x_save(i) + (speed_k*dt + 0.5*acc*(dt^2))*cos(theta_k);
+    y_save(i+1) = y_save(i) + (speed_k*dt + 0.5*acc*(dt^2))*sin(theta_k);
+    theta_save(i+1) = theta_save(i) + theta_dot_k*dt;
+    omegaL_save(i+1) = omegaL_save(i) + alpha_L*dt;
+    omegaR_save(i+1) = omegaR_save(i) + alpha_R*dt;
     % update
-    Vx_k = Vx_k + x_dd*dt;
-    Vy_k = Vy_k + y_dd*dt;
-    theta_d_k = theta_d_k + theta_dd*dt;
+    theta_k = theta_k + theta_dot_k*dt;
+    speed_k = speed_k + acc*dt;
 end
 
 % waypoint assignment -----------------------------------------------------
 % x_waypoints = ones(1, 40);
 % y_waypoints = ones(1, 40);
 % % importing track
-% [x_track, y_track] = racetrack_generation_2();
+% [x_track, y_track] = race_track();
 % figure(1)
 % plot(x_track,y_track, linewidth=4, Color='k')
 % axis equal
